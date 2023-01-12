@@ -19,6 +19,6 @@ var apiRouter = require("./platform/routes");
 app.use("/", apiRouter);
 process.on("unhandledRejection", (err) => {
 	console.log("Error : ", err);
-	server.close(() => process.exit(1));
+	app.close(() => process.exit(1));
 });
 app.listen(5000, () => console.log("Server Started..."));

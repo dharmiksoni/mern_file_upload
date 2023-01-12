@@ -1,5 +1,8 @@
-const FileHelper = require("../helpers/file_helper");
+// const FileHelper = require("../helpers/file_helper");
+const fs = require("fs");
+
 const FileApi = module.exports;
+const baseUrl = "http://localhost:5000/";
 
 FileApi.upload = async (req, res) => {
 	if (req.files === null) {
@@ -20,8 +23,19 @@ FileApi.upload = async (req, res) => {
 
 FileApi.download = async (req, res) => {
 	try {
-		const rv = await FileHelper.download();
-		return res.status(200).send(rv);
+		const fileName = req.query.name;
+		console.log('filename: ', fileName);
+		const path = __basedir + `/resources/${fileName}`;
+
+		res.download(path + fileName, (err) => {
+			if (err) {
+				res.status(500).send({
+					message: "File can not be downloaded: " + err,
+				});
+			}
+		});
+		// const rv = await FileHelper.download();
+		// return res.status(200).send(rv);
 	} catch (error) {
 		throw error;
 	}
@@ -29,8 +43,16 @@ FileApi.download = async (req, res) => {
 
 FileApi.getfiles = async (req, res) => {
 	try {
-		const rv = await FileHelper.getfiles();
-		return res.status(200).send(rv);
+		const directoryPath = __basedir + "/resources";
+		const fileInfos = [];
+		const files = fs.readdirSync(directoryPath).forEach((file) => {
+			console.log(file);
+			fileInfos.push({
+				name: file,
+				url: baseUrl + file,
+			});
+		});
+		return res.status(200).send(fileInfos);
 	} catch (error) {
 		throw error;
 	}

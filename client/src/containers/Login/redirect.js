@@ -15,8 +15,10 @@ const RedirectComponent = (props) => {
 				);
 				console.log("getURL : ", getURL);
 				if (getURL.status === 200) {
+					const token = getURL.data.api_token;
 					setIsLoggedIn(true);
 					sessionStorage.setItem("isLogin", true);
+					sessionStorage.setItem("token", token);
 					props.history.push("/dashboard");
 				}
 			})();

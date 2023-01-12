@@ -83,7 +83,7 @@ GSuiteApi.handleGoogleOAuthRedirect = async (req, res) => {
 				"oauth_tokens.google.email": userEmail,
 			}
 		);
-		
+
 		if (!authTokenResponse) {
 			authTokenResponse = await AuthHelper.createAPIToken({ user });
 		}
@@ -101,5 +101,12 @@ GSuiteApi.handleGoogleOAuthRedirect = async (req, res) => {
 GSuiteApi.logout = async (req, res) => {
 	const { user } = req;
 	const gSuite = new GoogleSuiteHelper();
-	const tokens = await gSuite.logout();
+	const existingUser = await UsersModel.findOne({ _id: user._id });
+	const access_token = lodash.get(existingUser, "oauth_tokens.google.access_token");
+	const tokens = await gSuite.logout({ access_token });
+	if (tokens) {
+		return res.status(200).send({
+			message: "Logout success",
+		});
+	}
 };

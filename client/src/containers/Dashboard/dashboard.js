@@ -4,6 +4,7 @@ import Message from "./Message";
 import Progress from "./Progress";
 import UploadService from "../../services/fileUpload";
 import withTemplate from "../../hoc/withTemplate";
+import download from "js-file-download";
 
 const Dashboard = () => {
 	const [selectedFiles, setSelectedFiles] = useState(undefined);
@@ -50,7 +51,21 @@ const Dashboard = () => {
 
 		setSelectedFiles(undefined);
 	};
-
+	const downloadFile = async (event, index, name) => {
+		if (event.target.className === "download-btn") {
+			const response = await UploadService.downloadfile(name, index);
+			console.log('res : ',response, index);
+			if (response.status === 200) {
+				download(response.data, name);
+			}
+			// get("/download", { params: { filename: filename, index: index } }).then(
+			// 	(res, req) => {
+			// 	  console.log(res);
+			// 	  download(res.data, filename);
+			// 	}
+			//   );
+		}
+	};
 	return (
 		<Fragment>
 			{message ? <Message msg={message} /> : null}
@@ -66,6 +81,7 @@ const Dashboard = () => {
 						{currentFile}
 					</label>
 				</div>
+
 				<Progress percentage={progress} />
 
 				<input
@@ -87,8 +103,14 @@ const Dashboard = () => {
 				<ul className="list-group list-group-flush">
 					{fileInfos &&
 						fileInfos.map((file, index) => (
-							<li className="list-group-item" key={index}>
-								<a href={file.url}>{file.name}</a>
+							<li
+								className="list-group-item"
+								key={file.name}
+								onClick={(e) => downloadFile(e, index, file.name)}
+							>
+								{/* <a href={file.url}>{file.name}</a> */}
+								<p>{file.name}</p>
+								<button className="download-btn">Download</button>
 							</li>
 						))}
 				</ul>
