@@ -19,7 +19,7 @@
     "fs": "^0.0.1-security",
     "googleapis": "^110.0.0",
     "jsonwebtoken": "^9.0.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mongodb": "^4.13.0",
     "mongoose": "^6.8.3",
     "multer": "^1.4.5-lts.1",
